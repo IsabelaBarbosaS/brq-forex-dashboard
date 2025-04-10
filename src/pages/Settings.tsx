@@ -1,51 +1,30 @@
-import {
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Grid,
-} from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { updateUser } from '../redux/userSlice';
+import { Button, Typography, Paper, Box } from '@mui/material';
 import { useState } from 'react';
+import { useAppSelector } from '../redux/hooks';
+import UserModal from '../components/UserModal';
 
 export default function Settings() {
   const user = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
-  const [form, setForm] = useState(user);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleSave = () => {
-    dispatch(updateUser(form));
-  };
+  const [open, setOpen] = useState(false);
 
   return (
     <Paper sx={{ p: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Cadastro de Usuário
+        Informações do Usuário
       </Typography>
-      <Grid container spacing={2}>
-        {['name', 'lastName', 'email', 'country'].map((field) => (
-          <Grid item xs={12} sm={6} key={field}>
-            <TextField
-              fullWidth
-              label={field}
-              name={field}
-              value={form[field as keyof typeof form]}
-              onChange={handleChange}
-            />
-          </Grid>
-        ))}
-        <Grid item xs={12}>
-          <Button variant="contained" onClick={handleSave}>
-            Salvar
-          </Button>
-        </Grid>
-      </Grid>
+
+      <Box mb={2}>
+        <Typography><strong>Nome:</strong> {user.name}</Typography>
+        <Typography><strong>Sobrenome:</strong> {user.lastName}</Typography>
+        <Typography><strong>País:</strong> {user.country}</Typography>
+        <Typography><strong>Email:</strong> {user.email}</Typography>
+      </Box>
+
+      <Button variant="contained" onClick={() => setOpen(true)}>
+        Editar Informações
+      </Button>
+
+      <UserModal open={open} onClose={() => setOpen(false)} />
     </Paper>
   );
 }
